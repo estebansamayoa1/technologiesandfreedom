@@ -3,6 +3,8 @@
 ## LAB 2
 ### Esteban Samayoa
 
+### IGNORAR EL ERROR DE WEB3 (Presionar la X del lado derecho y ya funciona bien). 
+
 1. Instalar web3 dentro de react
 2. Tener cuenta en metamask con Sepolias para poder comprar
 3. Correr el proyecto del frontend con npm start
