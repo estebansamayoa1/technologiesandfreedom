@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Web3 from 'web3'; 
 import './style.css';
+import contractABI from './abi.json';
 
 const App = () => {
   const [web3, setWeb3] = useState(null);
@@ -10,6 +11,7 @@ const App = () => {
   const [pendingClaim, setPendingClaim] = useState(0);
   const [icoStatus, setICOStatus] = useState({});
   const [amount, setAmount] = useState(0);
+
 
 
   useEffect(() => {
@@ -55,9 +57,32 @@ const App = () => {
     }
   }, [web3, account]);
 
-  const investInICO = async (amount) => {
-    // Implement the function to invest in the ICO
-  };
+  async function investInICO() {
+    try {
+      const investmentInEther = parseFloat(amount);
+      if (isNaN(investmentInEther) || investmentInEther <= 0) {
+        alert('Ingrese una cantidad válida para invertir.');
+        return;
+      }
+  
+      const investmentInWei = web3.utils.toWei(investmentInEther, 'ether');
+  
+      const contract = new web3.eth.Contract(contractABI, 0xECB13Cf26CA05A4C65cb8bdA5230036adc52A2BA);
+      await contract.methods.invest().send({
+        from: account,
+        value: investmentInWei,
+      });
+  
+    
+      const balanceWei = await web3.eth.getBalance(account);
+      const balanceEth = web3.utils.fromWei(balanceWei, 'ether');
+      setSepoliaETHBalance(balanceEth);
+
+    } catch (error) {
+      console.error('Error al invertir:', error);
+      alert('Error de conexión.');
+    }
+  }
 
   const claimVandidocoin = async () => {
     // Implement the function to claim Vandidocoin tokens
@@ -66,9 +91,9 @@ const App = () => {
   return (
     <div className="center-container">
       <h1>VANDIDOCOIN INTERFACE</h1>
-      <h2>Current Wallet: {account}</h2>
-      <div className="hovered-box">
-        <p><strong>1 SEPOLIA = 90 VANDIDOCOINS</strong></p>
+      <div className="box">
+      <h4>Current Wallet: {account}</h4>
+      <div>
         <p>Sepolia-ETH Balance: {sepoliaETHBalance} ETH</p>
         <p>Vandidocoin Balance: {vandidocoinBalance} Vandidocoin</p>
         <p>Pending Claim: {pendingClaim} Vandidocoin</p>
@@ -77,18 +102,28 @@ const App = () => {
       </div>
       <div>
         <h2>Invest in ICO</h2>
-        <input type="number" placeholder="Amount in ETH" />
-        <button onClick={() => investInICO(amount)}>Invest</button>
+        <input
+            type="text"
+            id="investment-amount"
+            placeholder="Ej. 2.00"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+          />
+        <button onClick={() => investInICO()} className="btn btn-success">Invest</button>
+        <p><strong>1 SEPOLIA = 90 VANDIDOCOINS</strong></p>
       </div>
-      <div>
+      <div> 
         <h2>Claim Vandidocoin</h2>
         <button onClick={claimVandidocoin}>Claim</button>
+      </div>
       </div>
     </div>
   );
 };
 
 export default App;
+
+
 
 
 
