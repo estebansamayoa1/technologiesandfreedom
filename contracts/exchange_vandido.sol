@@ -14,9 +14,8 @@ contract VandidocoinICO is ERC20, Ownable {
         wallet = msg.sender; 
 
         // Establecer la tasa de conversión deseada
-        icoRate = 90; // 1 SepoliaETH = 90 BDCs
+        icoRate = 90; 
 
-        // Emitir la cantidad inicial de tokens (200,000 BDC)
         _mint(msg.sender, 200000);
     }
 
